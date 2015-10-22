@@ -1,0 +1,79 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" x:Class="PFdata.ReportWindow"
+        Title="reportWindow" Height="437.862" Width="448.517" ResizeMode="CanMinimize" Background="White" BorderThickness="2" BorderBrush="White">
+    <Grid x:Name="ReportGrid"  Margin="0,0,0,0" Background="White">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="438*"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+
+
+        <Label x:Name="nameLabel" Content="" VerticalAlignment="Top" FontSize="14" FontWeight="Bold" Background="#FF919EAD" Height="39" Foreground="GhostWhite" Grid.ColumnSpan="2"/>
+
+
+        <Ellipse Fill="White" Height="77" Margin="0,9,14,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="98"/>
+
+
+        <Rectangle x:Name="greyBox5" Fill="#FFE5E5E5" Margin="96,248,0,0" Height="14" VerticalAlignment="Top" HorizontalAlignment="Left" Width="195"/>
+        <Rectangle x:Name="greyBox6" Fill="#FFE5E5E5" Margin="96,280,0,0" Height="14" VerticalAlignment="Top" HorizontalAlignment="Left" Width="195"/>
+        <Rectangle x:Name="greyBox7" Fill="#FFE5E5E5" Margin="96,296,0,0" Height="14" VerticalAlignment="Top" HorizontalAlignment="Left" Width="195"/>
+        <Rectangle x:Name="greyBox8" Fill="#FFE5E5E5" Margin="96,312,0,0" Height="14" VerticalAlignment="Top" HorizontalAlignment="Left" Width="195"/>
+        <Rectangle x:Name="greyBox9" Fill="#FFE5E5E5" Margin="96,344,0,0" Height="14" VerticalAlignment="Top" HorizontalAlignment="Left" Width="195"/>
+        <Rectangle x:Name="greyBox10" Fill="#FFE5E5E5" Margin="96,360,0,0" Height="14" VerticalAlignment="Top" HorizontalAlignment="Left" Width="195"/>
+
+
+        <Rectangle x:Name="greyBox1" Fill="#FFE5E5E5" Margin="0,160,10.4,0" Height="14" VerticalAlignment="Top" HorizontalAlignment="Right" Width="111"/>
+        <Rectangle x:Name="greyBox2" Fill="#FFE5E5E5" Margin="0,144,10.4,0" Height="14" VerticalAlignment="Top" HorizontalAlignment="Right" Width="111"/>
+        <Rectangle x:Name="greyBox3" Fill="#FFE5E5E5" Margin="0,176,10.4,0" Height="14" VerticalAlignment="Top" HorizontalAlignment="Right" Width="111"/>
+
+
+        <Rectangle x:Name="greyBoxBase_Copy" Fill="#FFE5E5E5" Height="20" Margin="27,110,9.4,0" VerticalAlignment="Top"/>
+        <Rectangle x:Name="greyBox4" Fill="#FFE5E5E5" Margin="0,192,10.4,0" Height="14" VerticalAlignment="Top" HorizontalAlignment="Right" Width="111"/>
+        <Rectangle x:Name="greyBoxCurr" Fill="#FFE5E5E5" Height="20" Margin="184,221,70.4,0" VerticalAlignment="Top"/>
+
+        <Rectangle x:Name="greyBoxBase" Fill="#FFE5E5E5" Height="20" Margin="27,221,227.4,0" VerticalAlignment="Top"/>
+
+        <TextBlock x:Name="studentDataBox" HorizontalAlignment="Left" Margin="88,49,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="67" Width="130"><LineBreak/><Run/></TextBlock>
+        <TextBlock x:Name="interventionsNeededBox" Margin="41,141,247.4,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="78" FontWeight="DemiBold"/>
+        <TextBlock x:Name="studentDataBoxLabels" HorizontalAlignment="Left" Margin="10,49,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="67" Width="73" TextAlignment="Right" FontWeight="DemiBold"><Run  Text="     Grade:  Start Date:"/><LineBreak/><Run  Text="         Status:"/><LineBreak/><Run /><LineBreak/><LineBreak/></TextBlock>
+        <TextBlock x:Name="interventionsNeededLabels" HorizontalAlignment="Left" Margin="27,111,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="20" Width="404" FontWeight="Bold" Text="   Interventions needed            Interventions Implemented            "/>
+        <TextBlock x:Name="rateMonthBox" HorizontalAlignment="Left" Margin="167,246,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="142" Width="70"><LineBreak/><Run/></TextBlock>
+        <TextBlock x:Name="prevRateBox" HorizontalAlignment="Left" Margin="102,246,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="132" Width="68"><LineBreak/><Run/></TextBlock>
+        <TextBlock x:Name="prevRateBoxLabels" HorizontalAlignment="Left" Margin="13,246,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="142" Width="78" TextAlignment="Right" FontWeight="DemiBold"><Run Text="  Attendance:"/><LineBreak/><Run Text=" "/><LineBreak/><Run Text="Office Refs:"/><LineBreak/><Run Text="Detentions:"/><LineBreak/><Run Text=" Suspensions:"/><LineBreak/><Run/><LineBreak/><Run Text="Acad. Score:"/><LineBreak/><Run Text="HW Score:"/><LineBreak/><LineBreak/><Run/><LineBreak/><Run/><LineBreak/><Run Text=""/><LineBreak/></TextBlock>
+        <Label x:Name="baseRateLabel" Content="Baseline " Margin="99,218,233.4,0" VerticalAlignment="Top" FontWeight="Bold" Height="25"/>
+        <Label x:Name="curRateLabel" Content="" Margin="161,218,216.4,0" VerticalAlignment="Top" FontWeight="Bold" Height="26" d:IsHidden="True"/>
+        <Rectangle x:Name="greyBoxChange" Fill="#FFE5E5E5" Height="20" Margin="340,221,9.4,0" VerticalAlignment="Top"/>
+        <Label x:Name="changeRateLabel" Content="Change" Margin="227,218,147,0" VerticalAlignment="Top" FontWeight="Bold" Height="27" ToolTip="Percentage Change: (current - baseline) / baseline"/>
+        <TextBlock x:Name="changeMonthBox" HorizontalAlignment="Left" Margin="229,246,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="142" Width="66"><LineBreak/><Run/></TextBlock>
+        <TextBlock x:Name="studentDataBox2" HorizontalAlignment="Left" Margin="304,49,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="67" Width="100"><LineBreak/><Run/></TextBlock>
+        <TextBlock x:Name="studentDataBoxLabels2" HorizontalAlignment="Left" Margin="183,49,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="67" Width="116" TextAlignment="Right" FontWeight="DemiBold"><Run Text="Missing BL Fields:  Days Supported:"/><LineBreak/><Run Text="         Days Reported:"/><LineBreak/><Run/><LineBreak/><LineBreak/></TextBlock>
+        <TextBlock x:Name="rateYTDBox" HorizontalAlignment="Left" Margin="167,246,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="142" Width="64" d:IsHidden="True"><LineBreak/><Run/></TextBlock>
+        <Label x:Name="rateYTDLabel" Content="" Margin="164,218,213.4,0" VerticalAlignment="Top" FontWeight="Bold" Height="26" Padding="5" ScrollViewer.CanContentScroll="True" UseLayoutRounding="False" VerticalContentAlignment="Center"/>
+        <TextBlock x:Name="changeYTDBox" HorizontalAlignment="Left" Margin="229,246,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="142" Width="62"><LineBreak/><Run/></TextBlock>
+        <ComboBox x:Name="periodComboBox" Margin="155,221,207.4,0" SelectedIndex="0" Height="20" VerticalAlignment="Top" FontWeight="Bold" BorderThickness="0,0,1,0" Background="#FFF5F3F3" Padding="6,2,1,3" RenderTransformOrigin="0,0.5" UseLayoutRounding="False">
+            <ComboBoxItem Content="  YTD" HorizontalAlignment="Left" Width="118.4" Selected="ComboBoxYTD_Selected" />
+            <ComboBoxItem Content="Month" HorizontalAlignment="Left" Width="118.4" Selected="ComboBoxMonth_Selected"/>
+        </ComboBox>
+
+
+        <TextBlock x:Name="serveBox" Margin="321,175,68.4,201" RenderTransformOrigin="0.5,0.5" />
+        <TextBlock x:Name="outSchoolBox" Margin="321,159,67.4,213"/>
+        <TextBlock x:Name="inSchoolBox" Margin="321,143,66.4,229" RenderTransformOrigin="0.5,0.5"/>
+
+        <TextBlock x:Name="careBox" Margin="321,191,68.4,186" RenderTransformOrigin="0.5,0.5" />
+        <TextBlock x:Name="servePctBox" Margin="377,175,6.4,201" RenderTransformOrigin="0.5,0.5" />
+        <TextBlock x:Name="outSchoolPctBox" Margin="377,159,6.4,213"/>
+        <TextBlock x:Name="inSchoolPctBox" Margin="377,143,5.4,229" RenderTransformOrigin="0.5,0.5"/>
+        <TextBlock x:Name="carePctBox" Margin="377,191,6.4,186" RenderTransformOrigin="0.5,0.5" />
+        <TextBlock x:Name="interventionMinsBox" Margin="155,141,126.4,181" TextWrapping="Wrap" TextAlignment="Right" FontWeight="DemiBold"><Run Text="In School Support:"/><LineBreak/><Run Text="Out of School Support:"/><LineBreak/><Run Text="Service/Leadership:"/><LineBreak/><Run Text="Caring Adult:"/></TextBlock>
+        <Label x:Name="NameLabel" Content="Report on" Margin="21,4,23,0" VerticalAlignment="Top" FontWeight="Bold" Height="35" FontSize="16" Foreground="GhostWhite"/>
+        <Label x:Name="otherMissingBaselineLabel" Content="Other Missing BL" Margin="306,218,5,0" VerticalAlignment="Top" Height="27" FontWeight="DemiBold"/>
+        <TextBlock x:Name="otherMissingBaselineTextBlock" Margin="306,247,10,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="124" Foreground="Red" FontSize="10.667"/>
+        <Image x:Name="AllianceLogo"  Source="resources/AllianceLogo.png" RenderOptions.BitmapScalingMode ="HighQuality" Margin="0,24,30,0" Height="62" VerticalAlignment="Top" ClipToBounds="True" HorizontalAlignment="Right" Width="63" RenderTransformOrigin="0.595,5.403"/>
+        <!--<Button x:Name="ScnShotButton" Content="Save" Margin="0,0,15,10" Click="ScnShotButton_Click" VerticalContentAlignment="Center" Padding="1,0,1,1" BorderBrush="#FFAAA5A5" Background="#FFE6E6E6" Foreground="#FF4F4F4F" Height="19" VerticalAlignment="Bottom" FontSize="9.333" HorizontalAlignment="Right" Width="45"/>-->
+
+
+    </Grid>
+</Window>
