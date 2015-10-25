@@ -9,7 +9,7 @@ namespace PFdata
     /// </summary>
     public partial class TableSettingsWindow : Window
     {
-        private static TableSettingsWindow window;
+        private static TableSettingsWindow _window;
         
         // Allow only one table settings window to be open at a time
         public static TableSettingsWindow GetTsWindow
@@ -21,9 +21,9 @@ namespace PFdata
                     return null;
                 }
 
-                window = new TableSettingsWindow();
+                _window = new TableSettingsWindow();
                 
-                return window;
+                return _window;
             }
         }
 
@@ -69,7 +69,7 @@ namespace PFdata
 
         }
 
-        private void SaveButton_Click(object sender, RoutedEventArgs e)
+        private async void SaveButton_Click(object sender, RoutedEventArgs e)
         {
             Settings.Default.DaysSupported = (bool)DaysSupportedCheckBox.IsChecked;
             Settings.Default.InterventionMin = (bool)InterventionMinCheckBox.IsChecked;
@@ -85,24 +85,24 @@ namespace PFdata
 
             Settings.Default.DataGridSplit = DataGridSplitComboBox.SelectionBoxItem.ToString();
             Settings.Default.RowItem = RowItemComboBox.SelectionBoxItem.ToString();
+            if (showInactiveBox.IsChecked != null)
+                Settings.Default.ShowInactive = (bool)showInactiveBox.IsChecked;
 
             Settings.Default.Save();
+            
 
-            if (Settings.Default.ShowInactive != (bool) showInactiveBox.IsChecked)
+            // Only reload if data is currently loaded into Dashboard
+            if (MainWindow.StudentList.Count != 0)
             {
-                Settings.Default.ShowInactive = (bool)showInactiveBox.IsChecked;
-                ((MainWindow)this.Owner).LoadData();
-            }
-            else
-            {
-                ((MainWindow)this.Owner).SetDatagrids();
+                // Reload data, but don't reload StudentList, nor the combobox filters.
+                await ((MainWindow)this.Owner).LoadData(false, false);            
             }
 
         }
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
-            LoadSettings();
+            this.Close();
         }
 
         private void DefaultButton_Click(object sender, RoutedEventArgs e)

@@ -3,15 +3,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows;
 using System.Xml.Serialization;
 using PFdata.Dashboard.Models;
 using PFdata.Dashboard.Operations;
 
 namespace PFdata.Dashboard.Data
 {
-
-    // !!!!!!!! PLEASE READ
 
     // The xml report that I had to base this on was formatted poorly, with each
     // field nested within the field that came before it. This was not something 
@@ -22,6 +19,7 @@ namespace PFdata.Dashboard.Data
     public static class StudentListGenerator
     {
         public static List<Student> StudentList = new List<Student>();
+        public static string ReportMonth; 
 
         private static List<ReportSubreport1ReportTablix1MN_PromiseFellows_StudentID1> _sortedListA;
         private static List<ReportSubreport4ReportTablix1MN_PromiseFellows_StudentID1> _sortedListB;
@@ -42,34 +40,33 @@ namespace PFdata.Dashboard.Data
             var x = new XmlSerializer(typeof (Report));
 
 
-            Report dataConverted = (Report)x.Deserialize(new StringReader(xData));
+            Report dataDeserialized = (Report)x.Deserialize(new StringReader(xData));
     
 
             var studentTotal =
-                dataConverted.Subreport1.Report.Tablix1.MN_PromiseFellows_StudentID1_Collection.Length;
+                dataDeserialized.Subreport1.Report.Tablix1.MN_PromiseFellows_StudentID1_Collection.Length;
 
             // Saving the month of the report 
-            var reportMonth = dataConverted.Subreport1.Report.Tablix1.Textbox50;
-            reportMonth = reportMonth.Substring(0, reportMonth.IndexOf("-"));
+            var reportMonth = dataDeserialized.Subreport1.Report.Tablix1.Textbox50;
+            ReportMonth = reportMonth.Substring(0, reportMonth.IndexOf("-"));
 
-            Application.Current.Properties["reportMonth"] = reportMonth;
 
             // Switch the student and member names so that the list can be sorted by student name 
             // (again, the XML report nests each field within its preceding field). 
 
-            SwitchStudentAndMemberNames(dataConverted);
+            SwitchStudentAndMemberNames(dataDeserialized);
 
             _sortedListA =
-                dataConverted.Subreport1.Report.Tablix1.MN_PromiseFellows_StudentID1_Collection.OrderBy(
+                dataDeserialized.Subreport1.Report.Tablix1.MN_PromiseFellows_StudentID1_Collection.OrderBy(
                     si => si.MemberName2.MemberName2).ToList();
             _sortedListB =
-                dataConverted.Subreport4.Report.Tablix1.MN_PromiseFellows_StudentID1_Collection.OrderBy(
+                dataDeserialized.Subreport4.Report.Tablix1.MN_PromiseFellows_StudentID1_Collection.OrderBy(
                     si => si.MemberName2.MemberName2).ToList();
             _sortedListC =
-                dataConverted.Subreport3.Report.Tablix1.MN_PromiseFellows_StudentID1_Collection.OrderBy(
+                dataDeserialized.Subreport3.Report.Tablix1.MN_PromiseFellows_StudentID1_Collection.OrderBy(
                     si => si.MemberName2.MemberName2).ToList();
             _sortedListI =
-                dataConverted.Subreport2.Report.Tablix1.MN_PromiseFellows_StudentID1_Collection.OrderBy(
+                dataDeserialized.Subreport2.Report.Tablix1.MN_PromiseFellows_StudentID1_Collection.OrderBy(
                     si => si.MemberName2.MemberName2).ToList();
 
             ExtractStudentFields(studentTotal);

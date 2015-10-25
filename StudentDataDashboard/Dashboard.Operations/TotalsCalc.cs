@@ -8,9 +8,9 @@ namespace PFdata.Dashboard.Operations
     public class TotalsCalc
     {
         // Calculates student total data to be inserted into the totals boxes 
-        public static Task CalculateStudentTotalsAsync(List<Student> filteredStudentList)
+        public static Task<StudentTotals> CalculateStudentTotalsAsync(List<Student> filteredStudentList)
         {
-            return Task.Run(() => MainWindow.Totals = CalculateStudentTotals(filteredStudentList));
+            return Task.Run(() => CalculateStudentTotals(filteredStudentList));
         }
 
         public static StudentTotals CalculateStudentTotals(List<Student> sortedStudentList)
@@ -48,6 +48,11 @@ namespace PFdata.Dashboard.Operations
             };
 
             return totals;
+        }
+
+        public static double IsNumberFilter(double number)
+        {
+            return double.IsNaN(number) ? 0 : number; 
         }
     }
 }

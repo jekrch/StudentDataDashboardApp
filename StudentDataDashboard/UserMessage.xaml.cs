@@ -9,7 +9,7 @@ namespace PFdata
     /// </summary>
     public partial class UserMessage : Window
     {
-        private static UserMessage window; 
+        private static UserMessage _window; 
 
         // Ensure that only one UserMessage window is open at a time
         public static UserMessage GetMsgWindow
@@ -21,16 +21,16 @@ namespace PFdata
                     return null;
                 }
 
-                window = new UserMessage();
+                _window = new UserMessage();
 
-                return window;
+                return _window;
             }
         }
 
         public UserMessage()
         {
             InitializeComponent();
-            if (App.Current.Properties["UserMessage"] != null)
+            if (Application.Current.Properties["UserMessage"] != null)
             {
                 var savedMessage = (UserMsg) App.Current.Properties["UserMessage"];
                 NameBox.Text = savedMessage.Name;

@@ -3,7 +3,6 @@ using System.Net.Mail;
 
 namespace PFdata.Dashboard.Data
 {
-    // The client used for sending error messages
     public class ErrorMsgClient
     {
         public static string Email = "dashboarderrormessages@gmail.com";
@@ -14,7 +13,7 @@ namespace PFdata.Dashboard.Data
             EnableSsl = true,
             UseDefaultCredentials = false,
             
-            // Specific credentials are redacted for public repo
+            // Credentials redacted for public repository
             Credentials = new NetworkCredential("redacted", "redacted")
         };
     }

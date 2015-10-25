@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -14,12 +13,10 @@ namespace PFdata
     /// </summary>
     public partial class ReportWindow : Window
     {
-        //private static Size _size;
-        private static string _studentReportName;
         private const string MinsTag = "<Span FontSize='10'>min</Span>";
         private const string MissingMessage = "<Span Foreground='Red'>missing</Span>";
         private const string MonthTag = "<Span FontSize='9'> /mo</Span>";
-        private Student _stud;
+        private readonly Student _stud;
 
         public ReportWindow()
         {
@@ -27,14 +24,8 @@ namespace PFdata
             InitializeComponent();
 
             // Retrieve Student object for selected student
-
-            _studentReportName = (string)App.Current.Properties["studentReportName"];
-
-            var studentList = (List<Student>)App.Current.Properties["studentList"];
-
-            _stud = studentList.First(s => s.Profile.Name == _studentReportName);
-
-
+            _stud = MainWindow.StudentList.First(s => s.Profile.Name == MainWindow.StudentForReport);
+            
             StudentDataCalc.SetRateChanges(_stud); // Set all of the rate change boxes
             
             DisplayInterventionsNeeded(); // Set the interventions needed boxes
@@ -51,7 +42,7 @@ namespace PFdata
 
         private void DisplayStudentInfo()
         {
-            NameLabel.Content = String.Format("Report on " + _studentReportName);
+            NameLabel.Content = String.Format("Report on " + MainWindow.StudentForReport);
 
             studentDataBox.Text = $"{_stud.Grade}\n{_stud.SupportDates.Start1}\n{_stud.Profile.Status}";
 
@@ -144,12 +135,12 @@ namespace PFdata
 
             // display percentage of high quality support mins marked as In-School Support
             inSchoolPctBox.Text = String.Format("{0:P0}",
-                (double) _stud.Intvns.DuplicatedTotalMins == 0 ? 
+                (double) _stud.Intvns.HighQualTotalMin == 0 ? 
                     0 : (_stud.Intvns.HighQualInSchoolMin/(double)(_stud.Intvns.HighQualInSchoolMin + _stud.Intvns.HighQualOutOfSchoolMin)));
 
             // display percentage of high quality support mins marked as Out-of-School Support
             outSchoolPctBox.Text = String.Format("{0:P0}",
-                (double) _stud.Intvns.DuplicatedTotalMins == 0 ? 
+                (double) _stud.Intvns.HighQualTotalMin == 0 ? 
                     0 : (_stud.Intvns.HighQualOutOfSchoolMin/(double)(_stud.Intvns.HighQualInSchoolMin + _stud.Intvns.HighQualOutOfSchoolMin)));
 
         }

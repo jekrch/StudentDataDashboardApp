@@ -79,11 +79,15 @@
     <Compile Include="Dashboard.Models\StudentStats\SupportDates.cs" />
     <Compile Include="Dashboard.Models\UserMsg.cs" />
     <Compile Include="Dashboard.Operations\FellowData.cs" />
+    <Compile Include="Dashboard.Operations\ListFilters.cs" />
     <Compile Include="Dashboard.Operations\StudentDataCalc.cs" />
     <Compile Include="Dashboard.Models\PromiseFellow.cs" />
     <Compile Include="Dashboard.Operations\TotalsCalc.cs" />
     <Compile Include="Dashboard.Presentation\ComboBoxControls.cs" />
     <Compile Include="Dashboard.Presentation\DataGridControls.cs" />
+    <Compile Include="DateSettingsWindow.xaml.cs">
+      <DependentUpon>DateSettingsWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ErrorLogWindow.xaml.cs">
       <DependentUpon>ErrorLogWindow.xaml</DependentUpon>
     </Compile>
@@ -103,6 +107,10 @@
     <Compile Include="UserMessage.xaml.cs">
       <DependentUpon>UserMessage.xaml</DependentUpon>
     </Compile>
+    <Page Include="DateSettingsWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="ErrorLogWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

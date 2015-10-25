@@ -8,6 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using System;
 using System.CodeDom.Compiler;
 using System.Configuration;
 using System.Diagnostics;
@@ -193,6 +194,41 @@ namespace PFdata.Properties {
             }
             set {
                 this["SendLog"] = value;
+            }
+        }
+        
+        [UserScopedSetting()]
+        [DebuggerNonUserCode()]
+        public DateTime ExcludeDate {
+            get {
+                return ((DateTime)(this["ExcludeDate"]));
+            }
+            set {
+                this["ExcludeDate"] = value;
+            }
+        }
+        
+        [UserScopedSetting()]
+        [DebuggerNonUserCode()]
+        [DefaultSettingValue("True")]
+        public bool ExcludeYouthPriorToDate {
+            get {
+                return ((bool)(this["ExcludeYouthPriorToDate"]));
+            }
+            set {
+                this["ExcludeYouthPriorToDate"] = value;
+            }
+        }
+        
+        [UserScopedSetting()]
+        [DebuggerNonUserCode()]
+        [DefaultSettingValue("True")]
+        public bool ExcludeYouthWithNegDays {
+            get {
+                return ((bool)(this["ExcludeYouthWithNegDays"]));
+            }
+            set {
+                this["ExcludeYouthWithNegDays"] = value;
             }
         }
     }

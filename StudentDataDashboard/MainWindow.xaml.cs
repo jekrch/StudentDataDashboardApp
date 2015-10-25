@@ -24,23 +24,25 @@ namespace PFdata
 
         public static List<Student> StudentList = new List<Student>();
 
-        private List<Student> _filteredStudentList = new List<Student>();
+        private static List<Student> _filteredStudentList = new List<Student>();
         private List<PromiseFellow> _fellowList = new List<PromiseFellow>();
         private List<RowItem> _rowList = new List<RowItem>();
 
-        public static Dictionary<string, string> FellowSiteDict = new Dictionary<string, string>();
-        private List<string> _fellowNameList;
-        private List<string> _siteList;
-        private List<string> _gradeList;
-        private bool _siteBoxActive; 
-   
-        public static StudentTotals Totals = new StudentTotals(); 
+        private static Dictionary<string, string> _fellowSiteDict = new Dictionary<string, string>();
+
+        private List<string> _studentNameList;
+
+        private bool _siteBoxActive;
+
+        private static StudentTotals _studentTotals = new StudentTotals(); 
 
         private string _studentReportName;
+        public static string StudentForReport;
+
         private string _fileName;
         public static string FilePath;
 
-
+        
         private const string MinsTag = "<Span FontSize='10'>min</Span>"; // Small text minutes tag to add to intervention total boxes
 
         private readonly DataTable _dataTable1 = new DataTable();
@@ -97,113 +99,65 @@ namespace PFdata
             // display last saved setting regarding whether to show error prompts or not
             LogSettingsMenuItem1.IsChecked = Settings.Default.DisplayErrorPrompt;
 
-
-           
+            // If the exclude date has not yet been set (first run of program), 
+            // set it to most recent, previous Sept 1st date. 
+            if (Settings.Default.ExcludeDate == default(DateTime))
+            {
+                Settings.Default.ExcludeDate = DateSettingsWindow.GetPreviousSeptemberDate(); 
+            }
+            
         }
 
-
+        
         // Master workflow: this loads xml file and displays data in datagrids and text fields 
-        public async Task LoadData()
+        public async Task LoadData(bool loadStudentList = true, bool setFilterBoxes = true)
         {
+            // load studentList unless otherwise specified
+            if (loadStudentList)
+            {           
+                StudentList.Clear();
 
-            StudentList.Clear();
-
-            ProgressBarStudentList.IsIndeterminate = true;
-            StudentList = await StudentListGenerator.CreateStudentListAsync(FilePath);
-            ProgressBarStudentList.IsIndeterminate = false;
-
+                ProgressBarStudentList.IsIndeterminate = true;
+                StudentList = await StudentListGenerator.CreateStudentListAsync(FilePath);
+                ProgressBarStudentList.IsIndeterminate = false;
+            }
 
             // Clear combobox and insert all student names in list, which can be selected to produce individual student data reports
+            _studentNameList = StudentList.Select(student => student.Profile.Name).Distinct().ToList();
+            ComboBoxControls.SetComboBox(studentBox, _studentNameList, false);
 
-            var studentList = StudentList.Select(student => student.Profile.Name).Distinct();
-            ComboBoxControls.SetComboBox(studentBox, studentList, false);
+            // Set filter comboboxes (site, fellow, and grade), unless otherwise specified,
+            // and return dictionary associating fellows with their sites
+            if (setFilterBoxes)
+            {
+                _fellowSiteDict = await ComboBoxControls.SetFilterBoxes(StudentList, siteBox, fellowBox, gradeBox);
+            }
 
-
-            // Get distinct sites and fellow names from students and listing them in comboboxes to be selected for sorting the datagrid
-
-            _siteList = StudentList.Select(student => student.Profile.Site).Distinct().ToList();
-
-            _fellowNameList = StudentList.Select(student => student.Profile.Fellow).Distinct().ToList();
-
-            _gradeList = StudentList.Select(student => student.Grade).Distinct().ToList();
-
-
-            // Generate dictionary associating each fellow with his or her site
-
-            await ComboBoxControls.CreateFellowSiteDict(_fellowNameList);
-
-            ComboBoxControls.SetComboBox(siteBox, _siteList);
-            ComboBoxControls.SetComboBox(fellowBox, _fellowNameList);
-            ComboBoxControls.SetComboBox(gradeBox, _gradeList);
-
-            _dataTable1.Clear();
-            _dataTable2.Clear();
-
-            // Set studentlist to datagrids
+            // filters student list according to settings and comboboxe selections
+            _filteredStudentList = ListFilters.SetStudentListFilters(siteBox, fellowBox, gradeBox);
+            
+            // Set student list to datagrid(s)
             SetDatagrids();
 
             // calculate student totals to add to total boxes
-            await TotalsCalc.CalculateStudentTotalsAsync(_filteredStudentList);
+            _studentTotals = await TotalsCalc.CalculateStudentTotalsAsync(_filteredStudentList);
 
             // Set text boxes presenting totals for student data 
-
             SetDataTotalBoxes();
 
-            //Saving studentList to properties to be used in reportWindow
-            App.Current.Properties["studentList"] = StudentList;
-
         }
-
-
-        // Sorts the datagrid by site and promise fellow - as specified in comboboxes
-        private void SiteAndFellowFilter()
-        {
-            if (siteBox.SelectedItem != null && siteBox.SelectedItem.ToString() != "All")
-            {
-                string site = siteBox.SelectedItem.ToString();
-
-                _filteredStudentList = (_filteredStudentList.Where(student => student.Profile.Site == site)).ToList();
-
-                _filteredStudentList = _filteredStudentList.Where(s => s.Profile.Site == site).ToList();
-
-            }
-
-            if (fellowBox.SelectedItem != null && fellowBox.SelectedItem.ToString() != "All")
-            {
-                string fellow = fellowBox.SelectedItem.ToString();
-
-                _filteredStudentList = (_filteredStudentList.Where(student => student.Profile.Fellow == fellow)).ToList();
-            }
-
-            if (gradeBox.SelectedItem != null && gradeBox.SelectedItem.ToString() != "All")
-            {
-                string grade = gradeBox.SelectedItem.ToString();
-
-                _filteredStudentList = (_filteredStudentList.Where(student => student.Grade == grade)).ToList();
-            }
-
-            if (!Settings.Default.ShowInactive && Settings.Default.RowItem == "Students")
-            {
-                _filteredStudentList = (_filteredStudentList.Where(student => student.Profile.Status == "Active")).ToList();
-            }
-
-        }
-
 
         // Sets the two main datagrids with data from the loaded report.
         public void SetDatagrids()
         {
-
+            // clear datatables to avoid stacking data on multiple file loads
             _dataTable1.Clear();
             _dataTable2.Clear();
 
-            _filteredStudentList = (StudentList.Select(student => student)).ToList(); 
-
-            SiteAndFellowFilter(); // Sorts the datagrid by site and promise fellow - as specified in comboboxes
-
-            if (Settings.Default.RowItem == "Students" || Settings.Default.RowItem == "") // Fill rows with students if 'Student' is selected in table settings window
+            // Fill rows with students if 'Student' is selected in table settings window
+            if (Settings.Default.RowItem == "Students" || Settings.Default.RowItem == "") 
             {
-                _rowList = _filteredStudentList.Cast<RowItem>().ToList(); //.ToList();
+                _rowList = _filteredStudentList.Cast<RowItem>().ToList();
                 
                 DataGridControls.SplitDataGrids(_rowList, _dataTable1, _dataTable2, MainGrid);
             }
@@ -212,12 +166,11 @@ namespace PFdata
                 _fellowList.Clear();
                 _fellowList = FellowData.CreatePromiseFellowList(_filteredStudentList);
 
-                _rowList = _fellowList.Cast<RowItem>().ToList(); //.ToList();
-                DataGridControls.SplitDataGrids(_rowList, _dataTable1, _dataTable2, MainGrid);
-                
+                _rowList = _fellowList.Cast<RowItem>().ToList(); 
+                DataGridControls.SplitDataGrids(_rowList, _dataTable1, _dataTable2, MainGrid);        
             }
 
-            // loading to datagrid
+            // Loading to datagrids
             dataGrid.ItemsSource = _dataTable1.DefaultView;
             dataGrid2.ItemsSource = _dataTable2.DefaultView;
 
@@ -230,42 +183,39 @@ namespace PFdata
             // Setting table labels
             GridLabel1.Content = $"{DataGridControls.DataGridLabel1} ({_dataTable1.Rows.Count})";
             GridLabel2.Content = $"{DataGridControls.DataGridLabel2} ({_dataTable2.Rows.Count})";
-  
-
         }
-
 
         // Assign data to total boxes 
         private void SetDataTotalBoxes()
         {
 
-            var inSchoolBoxString = $"{Totals.InSchoolSupportMins} {MinsTag}";
-            var outSchoolBoxString = $"{Totals.OutSchoolSupportMins} {MinsTag}";
-            var careBoxString = $"{Totals.CaringAdultsmin} {MinsTag}";
-            var serveBoxString = $"{Totals.ServiceMins} {MinsTag}";
+            var inSchoolBoxString = $"{_studentTotals.InSchoolSupportMins} {MinsTag}";
+            var outSchoolBoxString = $"{_studentTotals.OutSchoolSupportMins} {MinsTag}";
+            var careBoxString = $"{_studentTotals.CaringAdultsmin} {MinsTag}";
+            var serveBoxString = $"{_studentTotals.ServiceMins} {MinsTag}";
 
             SetInlineExpression.SetFormattedText(inSchoolBox, inSchoolBoxString);
             SetInlineExpression.SetFormattedText(outSchoolBox, outSchoolBoxString);
             SetInlineExpression.SetFormattedText(careBox, careBoxString);
             SetInlineExpression.SetFormattedText(serveBox, serveBoxString);
 
-            inSchoolPctBox.Text = $"{(Totals.InSchoolSupportMins / (Totals.InSchoolSupportMins + Totals.OutSchoolSupportMins)):P0}";
-            outSchoolPctBox.Text = $"{(Totals.OutSchoolSupportMins / (Totals.InSchoolSupportMins + Totals.OutSchoolSupportMins)):P0}";
-            //carePctBox.Text = $"{(Totals.CaringAdultsmin / Totals.InterventionMins):P0}";
-            //servePctBox.Text = $"{(Totals.ServiceMins / Totals.InterventionMins):P0}";
+            inSchoolPctBox.Text = 
+                $"{TotalsCalc.IsNumberFilter(_studentTotals.InSchoolSupportMins / (_studentTotals.InSchoolSupportMins + _studentTotals.OutSchoolSupportMins)):P0}";
+            outSchoolPctBox.Text = 
+                $"{TotalsCalc.IsNumberFilter(_studentTotals.OutSchoolSupportMins / (_studentTotals.InSchoolSupportMins + _studentTotals.OutSchoolSupportMins)):P0}";
 
             // Calculate and display the percentage of students who need each of the intervention types. 
 
             double studentCount = _filteredStudentList.Count();
 
             IntNeededBoxAttend.Text =
-                $"{_filteredStudentList.Count(student => student.Intvns.Needed.Attend == "No") / studentCount:P0}";
+                $"{TotalsCalc.IsNumberFilter(_filteredStudentList.Count(student => student.Intvns.Needed.Attend == "No") / studentCount):P0}";
 
             IntNeededBoxBehav.Text =
-                $"{_filteredStudentList.Count(student => student.Intvns.Needed.Behav == "Yes") / studentCount:P0}";
+                $"{TotalsCalc.IsNumberFilter(_filteredStudentList.Count(student => student.Intvns.Needed.Behav == "Yes") / studentCount):P0}";
 
             IntNeededBoxAcad.Text =
-                $"{_filteredStudentList.Count(student => student.Intvns.Needed.AcadMath == "Yes" || student.Intvns.Needed.AcadReading == "Yes" || student.Intvns.Needed.AcadOther == "Yes") / studentCount:P0}";
+                $"{TotalsCalc.IsNumberFilter(_filteredStudentList.Count(student => student.Intvns.Needed.AcadMath == "Yes" || student.Intvns.Needed.AcadReading == "Yes" || student.Intvns.Needed.AcadOther == "Yes") / studentCount):P0}";
 
             // Calculate and display the percentage of students in each grade. 
 
@@ -278,22 +228,20 @@ namespace PFdata
             // Setting general information boxes
 
             string missingBaselineBoxString =
-                $"<Span Foreground='{(Totals.MissingBaseline == 0 ? "Black" : "Red")}'>{Totals.MissingBaseline}</Span>";
+                $"<Span Foreground='{(_studentTotals.MissingBaseline == 0 ? "Black" : "Red")}'>{_studentTotals.MissingBaseline}</Span>";
 
             SetInlineExpression.SetFormattedText(missingBaselineBox, missingBaselineBoxString);
 
-            improvedBox.Text = Totals.ImproveOverall.ToString();
-            avgDaysReportedBox.Text = $"{Math.Round(Totals.ReportDays / studentCount, 1)}";
+            improvedBox.Text = _studentTotals.ImproveOverall.ToString();
+            avgDaysReportedBox.Text = $"{TotalsCalc.IsNumberFilter(Math.Round(_studentTotals.ReportDays / studentCount, 1))}";
             
         }
-
 
         // Displays the percentage of students in specified grade to appropriate textblock
         private void DisplayGradePercentages(double studentCount, TextBlock textblock, string grade)
         {
-            textblock.Text = $"{_filteredStudentList.Count(student => student.Grade == grade) /studentCount:P0}";
+            textblock.Text = $"{TotalsCalc.IsNumberFilter(_filteredStudentList.Count(student => student.Grade == grade) /studentCount):P0}";
         }
-
 
         // Displays reportWindow for student selected by user
         public void GetReport()
@@ -302,7 +250,7 @@ namespace PFdata
             {
                 _studentReportName = studentBox.SelectedItem.ToString();
 
-                App.Current.Properties["studentReportName"] = _studentReportName;
+              StudentForReport = _studentReportName; 
 
                 var report = new ReportWindow
                 {
@@ -331,6 +279,7 @@ namespace PFdata
         {
             GetReport();
         }
+
         
         private void dataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -354,13 +303,10 @@ namespace PFdata
 
         private async void UpdateButton_Click(object sender, RoutedEventArgs e)
         {
-            SetDatagrids();
 
-            await TotalsCalc.CalculateStudentTotalsAsync(_filteredStudentList);
+            // Reload data, but don't reload StudentList, nor reset the combobox filters.
+            await LoadData(false, false);
 
-            // Set text boxes presenting totals for student data 
-
-            SetDataTotalBoxes();
         }
 
         private void TableSettingsMenuItem_Click(object sender, RoutedEventArgs e)
@@ -480,15 +426,13 @@ namespace PFdata
             {
                 var fellowName = fellowBox.SelectedItem.ToString();
 
-                siteBox.SelectedValue = FellowSiteDict[fellowName];
+                siteBox.SelectedValue = _fellowSiteDict[fellowName];
             }
          
 
         }
 
-        // Ensures that when a fellow is selected in combo box only the fellow's associated 
-        // sites are available in the site combo box. Likewise, when a site is selected, only
-        // the promise fellows associated with that site are available in the fellow box.
+        // If the user selects a site in the site combobox, reassign items to the fellow combobox so that invalid pairs cannot be selected.
         private void siteBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (siteBox.SelectedItem != null && siteBox.SelectedItem.ToString() != "All" && _siteBoxActive)
@@ -496,7 +440,7 @@ namespace PFdata
                 var siteName = siteBox.SelectedItem.ToString();
                 fellowBox.Items.Clear();
                 fellowBox.Items.Add("All");
-                foreach (var item in FellowSiteDict)
+                foreach (var item in _fellowSiteDict)
                 {
                     if (item.Value == siteName)
                     {
@@ -506,13 +450,12 @@ namespace PFdata
 
                 fellowBox.SelectedIndex = 0;
             }
-
             if (siteBox.SelectedItem != null && siteBox.SelectedItem.ToString() == "All" && _siteBoxActive)
             {
                 var prevIdx = fellowBox.SelectedIndex;
                 fellowBox.Items.Clear();
                 fellowBox.Items.Add("All");
-                foreach (var item in FellowSiteDict)
+                foreach (var item in _fellowSiteDict)
                 {
                     fellowBox.Items.Add(item.Key);
                 }
@@ -533,6 +476,22 @@ namespace PFdata
         private void LogSettingsMenuItem1_Click(object sender, RoutedEventArgs e)
         {
             Settings.Default.DisplayErrorPrompt = LogSettingsMenuItem1.IsChecked; 
+        }
+
+        private void ExcludedDatesMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            var win = new DateSettingsWindow
+            {
+                Owner = this
+            };
+
+            win.Show();
+
+            if (Settings.Default.ExcludeDate == default(DateTime))
+            {
+                Settings.Default.ExcludeDate = DateSettingsWindow.GetPreviousSeptemberDate();
+                Settings.Default.Save();
+            }
         }
     }
 

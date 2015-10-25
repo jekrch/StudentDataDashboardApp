@@ -43,8 +43,8 @@
             <ComboBoxItem x:Name="PromiseFellows" Content="Promise Fellows" HorizontalAlignment="Left" Width="118.4"/>
         </ComboBox>
         <Button x:Name="SaveButton" Content="Save" Margin="24,258,225,0" VerticalAlignment="Top" Click="SaveButton_Click" Height="22"/>
-        <Button x:Name="CancelButton" Content="Cancel" Margin="123,258,126,0" VerticalAlignment="Top" Height="22" Click="CancelButton_Click" />
-        <Button x:Name="DefaultButton" Content="Default" Margin="222,258,27,0" VerticalAlignment="Top" Height="22" Click="DefaultButton_Click"/>
+        <Button x:Name="CancelButton" Content="Cancel" Margin="125,258,124,0" VerticalAlignment="Top" Height="22" Click="CancelButton_Click" />
+        <Button x:Name="DefaultButton" Content="Default" Margin="225,258,24,0" VerticalAlignment="Top" Height="22" Click="DefaultButton_Click"/>
         <Label x:Name="DataGridSplitLabel" Content="Table Categories" Foreground="GhostWhite" Margin="22,10,182,0" HorizontalContentAlignment="Center" FontWeight="Bold" Height="26" VerticalAlignment="Top"/>
         <Label x:Name="DataGridSplitLabel_Copy" Content="Row Items" Foreground="GhostWhite" Margin="177,10,28,0" HorizontalContentAlignment="Center" FontWeight="Bold" Height="26" VerticalAlignment="Top"/>
         <Label x:Name="TableColumnsLabel" Content="Table Columns" Foreground="#FF596674" Margin="92,78,112,0" HorizontalContentAlignment="Center" FontWeight="Bold" Height="26" VerticalAlignment="Top"/>
