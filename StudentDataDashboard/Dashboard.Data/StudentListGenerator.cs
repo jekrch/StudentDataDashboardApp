@@ -18,7 +18,7 @@ namespace PFdata.Dashboard.Data
 
     public static class StudentListGenerator
     {
-        public static List<Student> StudentList = new List<Student>();
+       // public static List<Student> StudentList = new List<Student>();
         public static string ReportMonth; 
 
         private static List<ReportSubreport1ReportTablix1MN_PromiseFellows_StudentID1> _sortedListA;
@@ -69,10 +69,10 @@ namespace PFdata.Dashboard.Data
                 dataDeserialized.Subreport2.Report.Tablix1.MN_PromiseFellows_StudentID1_Collection.OrderBy(
                     si => si.MemberName2.MemberName2).ToList();
 
-            ExtractStudentFields(studentTotal);
+            List<Student> studentList = ExtractStudentFields(studentTotal);
 
 
-            foreach (Student stud in StudentList)
+            foreach (Student stud in studentList)
             {
 
                 try
@@ -98,7 +98,7 @@ namespace PFdata.Dashboard.Data
 
             }
 
-            return StudentList;
+            return studentList;
         }
 
         private static void SwitchStudentAndMemberNames(Report dataConverted)
@@ -150,8 +150,9 @@ namespace PFdata.Dashboard.Data
 
         // This extracts data from deserialized objects and enters them into appropriate fields for 
         // each student object in the new list
-        private static void ExtractStudentFields(int studentTotal)
+        private static List<Student> ExtractStudentFields(int studentTotal)
         {
+            List<Student> studentList = new List<Student>();
 
             for (int i = 0; i < studentTotal; i++)
             {
@@ -886,8 +887,10 @@ namespace PFdata.Dashboard.Data
                     .MINUTES_TotalInterventionForThisStudent
                     .Textbox114.Textbox131.Textbox35.Textbox23.MINUTES_Out_Of_School_Time;
 
-                StudentList.Add(stud); 
+                studentList.Add(stud); 
             }
+
+            return studentList; 
         }
     }
 }

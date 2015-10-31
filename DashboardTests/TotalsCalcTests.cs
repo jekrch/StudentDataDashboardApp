@@ -11,7 +11,7 @@ namespace DashboardTests
     [TestFixture]
     public class TotalsCalcTests
     {
-        Application app = new Application();
+        Application app = new Application(); //todo: use mock interface
         List<Student> studentList =
             StudentListGenerator.CreateStudentList(@"../../TestReport/TestData.xml");
         Student student = new Student();

@@ -77,27 +77,26 @@ namespace PFdata.Dashboard.Presentation
 
         public static void SetDatagridLabels(Grid mainGrid, Label gridLabel1, Label gridLabel2)
         {
+           
             switch (Settings.Default.DataGridSplit)
             {
                 case "Improved/Pending":
                     DataGridLabel1 = "Improved";
                     DataGridLabel2 = "Pending";
-                    mainGrid.ColumnDefinitions[1].Width = new GridLength(1, GridUnitType.Star);
                     break;
                 case "Missing Baseline":
                     DataGridLabel1 = "All Data Entered";
                     DataGridLabel2 = "Missing Baseline Data";
-                    mainGrid.ColumnDefinitions[1].Width = new GridLength(1, GridUnitType.Star);
                     break;
                 case "No Split":
-                    mainGrid.ColumnDefinitions[1].Width = new GridLength(10);
                     break;
                 default:
                     DataGridLabel1 = "Active";
                     DataGridLabel2 = "Inactive";
-                    mainGrid.ColumnDefinitions[1].Width = new GridLength(1, GridUnitType.Star);
                     break;
             }
+
+            //mainGrid.ColumnDefinitions[1].Width = new GridLength(1, GridUnitType.Star);
 
             if (string.IsNullOrEmpty(Settings.Default.RowItem))
                 Settings.Default.RowItem = "Students";

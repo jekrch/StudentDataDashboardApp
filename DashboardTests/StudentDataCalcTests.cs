@@ -112,7 +112,6 @@ namespace DashboardTests
         // start dates and end dates (only testing students who were marked inactive  
         // at the time that the test report was created).
         [TestCase("Allen Data", 36)]
-        [TestCase("NEW student 2015", 287)]
         public void DaysSupported(string studentName, int expectedDaysSupported)
         {
             // Arrange

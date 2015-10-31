@@ -29,14 +29,12 @@ namespace PFdata
         private List<RowItem> _rowList = new List<RowItem>();
 
         private static Dictionary<string, string> _fellowSiteDict = new Dictionary<string, string>();
-
         private List<string> _studentNameList;
 
         private bool _siteBoxActive;
 
-        private static StudentTotals _studentTotals = new StudentTotals(); 
+        private StudentTotals _studentTotals = new StudentTotals(); 
 
-        private string _studentReportName;
         public static string StudentForReport;
 
         private string _fileName;
@@ -143,7 +141,7 @@ namespace PFdata
             _studentTotals = await TotalsCalc.CalculateStudentTotalsAsync(_filteredStudentList);
 
             // Set text boxes presenting totals for student data 
-            SetDataTotalBoxes();
+            SetDataTotalBoxes(_studentTotals);
 
         }
 
@@ -186,13 +184,13 @@ namespace PFdata
         }
 
         // Assign data to total boxes 
-        private void SetDataTotalBoxes()
+        private void SetDataTotalBoxes(StudentTotals studentTotals)
         {
 
-            var inSchoolBoxString = $"{_studentTotals.InSchoolSupportMins} {MinsTag}";
-            var outSchoolBoxString = $"{_studentTotals.OutSchoolSupportMins} {MinsTag}";
-            var careBoxString = $"{_studentTotals.CaringAdultsmin} {MinsTag}";
-            var serveBoxString = $"{_studentTotals.ServiceMins} {MinsTag}";
+            var inSchoolBoxString = $"{studentTotals.InSchoolSupportMins} {MinsTag}";
+            var outSchoolBoxString = $"{studentTotals.OutSchoolSupportMins} {MinsTag}";
+            var careBoxString = $"{studentTotals.CaringAdultsmin} {MinsTag}";
+            var serveBoxString = $"{studentTotals.ServiceMins} {MinsTag}";
 
             SetInlineExpression.SetFormattedText(inSchoolBox, inSchoolBoxString);
             SetInlineExpression.SetFormattedText(outSchoolBox, outSchoolBoxString);
@@ -200,9 +198,9 @@ namespace PFdata
             SetInlineExpression.SetFormattedText(serveBox, serveBoxString);
 
             inSchoolPctBox.Text = 
-                $"{TotalsCalc.IsNumberFilter(_studentTotals.InSchoolSupportMins / (_studentTotals.InSchoolSupportMins + _studentTotals.OutSchoolSupportMins)):P0}";
+                $"{TotalsCalc.IsNumberFilter(studentTotals.InSchoolSupportMins / (studentTotals.InSchoolSupportMins + studentTotals.OutSchoolSupportMins)):P0}";
             outSchoolPctBox.Text = 
-                $"{TotalsCalc.IsNumberFilter(_studentTotals.OutSchoolSupportMins / (_studentTotals.InSchoolSupportMins + _studentTotals.OutSchoolSupportMins)):P0}";
+                $"{TotalsCalc.IsNumberFilter(studentTotals.OutSchoolSupportMins / (studentTotals.InSchoolSupportMins + studentTotals.OutSchoolSupportMins)):P0}";
 
             // Calculate and display the percentage of students who need each of the intervention types. 
 
@@ -228,12 +226,12 @@ namespace PFdata
             // Setting general information boxes
 
             string missingBaselineBoxString =
-                $"<Span Foreground='{(_studentTotals.MissingBaseline == 0 ? "Black" : "Red")}'>{_studentTotals.MissingBaseline}</Span>";
+                $"<Span Foreground='{(studentTotals.MissingBaseline == 0 ? "Black" : "Red")}'>{studentTotals.MissingBaseline}</Span>";
 
             SetInlineExpression.SetFormattedText(missingBaselineBox, missingBaselineBoxString);
 
-            improvedBox.Text = _studentTotals.ImproveOverall.ToString();
-            avgDaysReportedBox.Text = $"{TotalsCalc.IsNumberFilter(Math.Round(_studentTotals.ReportDays / studentCount, 1))}";
+            improvedBox.Text = studentTotals.ImproveOverall.ToString();
+            avgDaysReportedBox.Text = $"{TotalsCalc.IsNumberFilter(Math.Round(studentTotals.ReportDays / studentCount, 1))}";
             
         }
 
@@ -248,16 +246,14 @@ namespace PFdata
         {
             if (studentBox.SelectedItem != null)
             {
-                _studentReportName = studentBox.SelectedItem.ToString();
+                StudentForReport = studentBox.SelectedItem.ToString();
 
-              StudentForReport = _studentReportName; 
-
-                var report = new ReportWindow
+              var report = new ReportWindow
                 {
-                    Title = _studentReportName,
+                    Title = StudentForReport,
                     Owner = this
                 };
-
+                
                 report.Show();
             }
         }
@@ -286,9 +282,9 @@ namespace PFdata
             if (dataGrid.SelectedItems.Count <= 0) return;
 
             DataRowView row = (DataRowView) dataGrid.SelectedItems[0];
-            _studentReportName = row["Name"].ToString();
+            StudentForReport = row["Name"].ToString();
 
-            studentBox.SelectedValue = _studentReportName;
+            studentBox.SelectedValue = StudentForReport;
         }
 
         private void dataGrid2_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -296,9 +292,9 @@ namespace PFdata
             if ( dataGrid2.SelectedItems.Count <= 0) return; 
 
             var row = (DataRowView) dataGrid2.SelectedItems[0];
-            _studentReportName = row["Name"].ToString();
+            StudentForReport = row["Name"].ToString();
 
-            studentBox.SelectedValue = _studentReportName;
+            studentBox.SelectedValue = StudentForReport;
         }
 
         private async void UpdateButton_Click(object sender, RoutedEventArgs e)

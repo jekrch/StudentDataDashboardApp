@@ -12,12 +12,12 @@ namespace PFdata.Dashboard.Presentation
         public static void SetComboBox(ComboBox comboBox, IEnumerable<string> list, bool includeAll = true)
         {
 
-            list = list.OrderBy(e => e); // order numbers by numbers
+            list = list.OrderBy(e => e); 
 
             // order gradeBox by item length so that 10th grade comes last (after 9th)
             if (comboBox.Name == "gradeBox") list = list.OrderBy(e => e.Length);
 
-            comboBox.Items.Clear(); // Make sure we aren't just added to what was there before. 
+            comboBox.Items.Clear();  
 
             if (includeAll) comboBox.Items.Add("All");
 
